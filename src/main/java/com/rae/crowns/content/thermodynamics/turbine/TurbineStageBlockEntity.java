@@ -1,14 +1,20 @@
 package com.rae.crowns.content.thermodynamics.turbine;
 
 import com.rae.crowns.config.CROWNSConfigs;
+import com.rae.crowns.content.sound.CrownsSoundScapes;
+import com.rae.crowns.content.thermodynamics.ISteamPressureChange;
 import com.simibubi.create.content.kinetics.base.GeneratingKineticBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.util.Arrays;
 import java.util.List;
@@ -31,8 +37,15 @@ public class TurbineStageBlockEntity extends GeneratingKineticBlockEntity implem
     }
 
     @Override
+    public boolean isSource() {
+        return true;
+    }
+
+    @Override
     public float getGeneratedSpeed() {
-        return flows.isEmpty()||power==0?0: CROWNSConfigs.SERVER.kinetics.turbineSpeed.get(); // * direction du flux
+        //if flows is empty and power!=0 it means that the BE is being loaded, we need to trust only the power in that case
+        //so there is no need to check for the flows.
+        return power==0?0: CROWNSConfigs.SERVER.kinetics.turbineSpeed.get(); // * direction du flux
     }
     @Override
     public float calculateAddedStressCapacity() {//it's the stress base not the real stress
@@ -52,8 +65,12 @@ public class TurbineStageBlockEntity extends GeneratingKineticBlockEntity implem
     }
 
     @Override
-    public void tick() {
-        super.tick();
+    @OnlyIn(Dist.CLIENT)
+    public void tickAudio() {
+        super.tickAudio();
+        if (Math.abs(speed) > 0) {
+            CrownsSoundScapes.play(CrownsSoundScapes.AmbienceGroup.TURBINE, worldPosition, Mth.lerp(Math.abs(speed)/256,0.25f, 1));
+        }
 
     }
 
@@ -76,7 +93,25 @@ public class TurbineStageBlockEntity extends GeneratingKineticBlockEntity implem
         flows = level.getEntitiesOfClass(SteamCurrent.class, bound);
         power = 0;
         flows.forEach(f -> power += f.getPowerForStage(this));
+
         if (level.isClientSide()) return;
         updateGeneratedRotation();
+    }
+
+    @Override
+    protected boolean isNoisy() {
+        return true;
+    }
+
+    @Override
+    protected void write(CompoundTag compound, boolean clientPacket) {
+        compound.putFloat("power", power);
+        super.write(compound, clientPacket);
+    }
+
+    @Override
+    protected void read(CompoundTag compound, boolean clientPacket) {
+        super.read(compound, clientPacket);
+        power = compound.getFloat("power");
     }
 }

@@ -1,6 +1,6 @@
 package com.rae.crowns.content.thermodynamics.compressor;
 
-import com.rae.crowns.init.BlockEntityInit;
+import com.rae.crowns.init.misc.BlockEntityInit;
 import com.simibubi.create.content.kinetics.base.DirectionalKineticBlock;
 import com.simibubi.create.content.kinetics.simpleRelays.ICogWheel;
 import com.simibubi.create.foundation.block.IBE;
@@ -26,7 +26,7 @@ public class CompressorBlock extends DirectionalKineticBlock implements IBE<Comp
     }
     @Override
     public boolean hasShaftTowards(LevelReader world, BlockPos pos, BlockState state, Direction face) {
-        return face.getAxis() == state.getValue(FACING).getAxis();
+        return false;//face.getAxis() == state.getValue(FACING).getAxis();
     }
 
     @Override

@@ -1,22 +1,25 @@
 package com.rae.crowns.content.thermodynamics.conduction;
 
-import com.rae.crowns.api.nuclear.IHaveTemperature;
-import com.rae.crowns.api.units.Temperature;
-import com.rae.crowns.config.CROWNSCfgClient;
 import com.rae.crowns.config.CROWNSConfigs;
+import com.rae.crowns.content.fields.temperature.TemperatureManager;
+import com.rae.crowns.content.fields.temperature.TemperatureWorldData;
+import com.rae.crowns.content.thermodynamics.IHaveTemperature;
 import com.rae.crowns.content.thermodynamics.StateFluidTank;
-import com.rae.crowns.init.BlockInit;
-import com.simibubi.create.content.equipment.goggles.IHaveGoggleInformation;
-import com.simibubi.create.content.fluids.transfer.FluidManipulationBehaviour;
+import com.rae.crowns.init.misc.BlockInit;
+
+import com.rae.formicapi.FormicApiLang;
+import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
+import com.simibubi.create.content.fluids.PipeConnection;
+import com.simibubi.create.content.fluids.pipes.StraightPipeBlockEntity;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
-import com.simibubi.create.foundation.blockEntity.behaviour.BehaviourType;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
-import com.simibubi.create.foundation.utility.Lang;
+import com.simibubi.create.foundation.utility.CreateLang;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.world.level.block.DirectionalBlock;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -30,11 +33,7 @@ import net.minecraftforge.fluids.capability.templates.FluidTank;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-
-import static com.rae.crowns.api.transformations.WaterAsRealGazTransformationHelper.get_h;
 
 public class HeatExchangerBlockEntity extends SmartBlockEntity implements IHaveGoggleInformation, IHaveTemperature {
     //transform the IHaveTemperature interface into a behavior
@@ -97,27 +96,46 @@ public class HeatExchangerBlockEntity extends SmartBlockEntity implements IHaveG
                 if (handler.getFluidAmount()< (float) WATER_TANK.getFluidAmount()){//if input of following handler is smaller than ours
                     FluidStack stack =  WATER_TANK.getFluid().copy();
                     stack.setAmount(WATER_TANK.getFluidAmount() - handler.getFluidAmount());
-                    this.fluidCapability.orElse(new FluidTank(0))
-                                .drain(handler.fill(stack, IFluidHandler.FluidAction.EXECUTE), IFluidHandler.FluidAction.EXECUTE);
+                    WATER_TANK.drain(handler.fill(stack, IFluidHandler.FluidAction.EXECUTE), IFluidHandler.FluidAction.EXECUTE);
+                }
+            }
+
+            //internal conduction
+            if (WATER_TANK.getFluidAmount() > 0) {
+                int steps = 10;
+                for (int i = 0; i < steps; i++) {
+                    float dt = 0.05F / steps; // time step duration in seconds
+                    float deltaT = temperature - WATER_TANK.getState().temperature();
+
+                    // Calculate the heat transfer using exponential decay for stability
+                    float heatTransfer = deltaT * this.getInternalConductivity() * dt;
+
+                    // Transfer heat to water
+                    WATER_TANK.heat(heatTransfer);
+                    temperature -= heatTransfer / this.getThermalCapacity();
                 }
             }
         }
     }
 
-
+    @Override
+    public void initialize() {
+        super.initialize();
+        if (level instanceof ServerLevel serverLevel) {
+            TemperatureWorldData data = TemperatureManager.get(serverLevel);
+            if (data != null) {
+                data.putDynamic(getBlockPos(), this);
+            }
+        }
+    }
 
     @Override
     public void lazyTick() {
         //What the fuck is going on here ?
         super.lazyTick();
-        conductTemperature(getBlockPos(),level, 0.5f);
+        //conductTemperature(getBlockPos(),level, 0.5f);
 
-        //make the calculus, so it's the real nbr or make it in stage ( like ten stage )
-        float power = getInternalConductivity() * (this.getTemperature() - WATER_TANK.getState().temperature()) / 2;
-        WATER_TANK.heat(power);
-        this.addTemperature(
-                -power
-                        / this.getThermalCapacity());
+
         // the fact that it changes too often make it bugged ->
         // maybe if it's directly in  the fluidTransport behaviour
         sendData();
@@ -130,10 +148,10 @@ public class HeatExchangerBlockEntity extends SmartBlockEntity implements IHaveG
 
     @Override
     public float getThermalConductivity() {
-        return 10000;
+        return CROWNSConfigs.SERVER.conduction.heatExchangerExternal.getF();
     }
     public float getInternalConductivity() {
-        return 100000;
+        return CROWNSConfigs.SERVER.conduction.heatExchangerInternal.getF();
     }
 
     @Override
@@ -168,10 +186,8 @@ public class HeatExchangerBlockEntity extends SmartBlockEntity implements IHaveG
 
     @Override
     public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
-
-        Temperature temperatureUnit = CROWNSConfigs.CLIENT.units.temperature.get();
-        Lang.builder().add(Component.literal("exchanger T = "+(int) temperatureUnit.convert(temperature)))
-                .add(Component.literal(temperatureUnit.getSymbol()))
+        CreateLang.builder().add(Component.literal("exchanger "))
+                .add(FormicApiLang.formatTemperature(temperature))
                 .style(ChatFormatting.DARK_RED)
                 .forGoggles(tooltip, 1);
         containedFluidTooltip(tooltip, isPlayerSneaking, fluidCapability);
@@ -194,29 +210,15 @@ public class HeatExchangerBlockEntity extends SmartBlockEntity implements IHaveG
     }
 
     // an entity that is responsible for searching an linking blocks that have fluid between them ?
-    private static class FluidThermalConduction extends FluidManipulationBehaviour {
+    private static class HeatTransfertBehaviour extends StraightPipeBlockEntity.StraightPipeFluidTransportBehaviour {
 
-        public static final BehaviourType<FluidThermalConduction> TYPE = new BehaviourType<>();
-        private Set<BlockPos> inContactBlocks;
-        public FluidThermalConduction(SmartBlockEntity be) {
+        public HeatTransfertBehaviour(SmartBlockEntity be) {
             super(be);
-            inContactBlocks = new HashSet<>();
         }
 
         @Override
-        public void tick() {
-            super.tick();
-        }
-
-        @Override
-        public BehaviourType<?> getType() {
-            return TYPE;
-        }
-        public void findInContactBlocks(){
-            reset();
-        }
-        public Set<BlockPos> getInContactBlocks() {
-            return inContactBlocks;
+        public @Nullable PipeConnection.Flow getFlow(Direction side) {
+            return super.getFlow(side);
         }
     }
 }

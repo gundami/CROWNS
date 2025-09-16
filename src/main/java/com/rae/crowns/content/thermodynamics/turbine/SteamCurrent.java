@@ -1,12 +1,13 @@
 package com.rae.crowns.content.thermodynamics.turbine;
 
-import com.rae.crowns.api.flow.client.FlowParticleData;
-import com.rae.crowns.api.flow.commun.FlowLine;
-import com.rae.crowns.api.thermal_utilities.SpecificRealGazState;
-import com.rae.crowns.api.transformations.WaterAsRealGazTransformationHelper;
-import com.rae.crowns.init.BlockInit;
-import com.rae.crowns.init.EntityDataSerializersInit;
-import com.simibubi.create.foundation.utility.Color;
+import com.rae.crowns.content.thermodynamics.ISteamPressureChange;
+import com.rae.flow.client.FlowParticleData;
+import com.rae.flow.commun.FlowLine;
+import com.rae.formicapi.thermal_utilities.SpecificRealGazState;
+import com.rae.formicapi.thermal_utilities.helper.WaterTableBased;
+import com.rae.crowns.init.misc.BlockInit;
+import com.rae.crowns.init.data.EntityDataSerializersInit;
+import net.createmod.catnip.theme.Color;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -21,11 +22,9 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.DirectionalBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.network.NetworkHooks;
@@ -36,7 +35,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
-import static com.rae.crowns.api.Constants.whatSU;
+import static com.rae.crowns.Constants.whatSU;
 
 public class SteamCurrent extends Entity{
 	private static final EntityDataAccessor<AABB> SYNCED_BB_ACCESSOR = SynchedEntityData.defineId(SteamCurrent.class, EntityDataSerializersInit.BB_SERIALIZER);
@@ -127,9 +126,9 @@ public class SteamCurrent extends Entity{
             if (stage != null) {
 				float pressureRatio = stage.pressureRatio();
 				if (pressureRatio < 1) {
-					nextState = WaterAsRealGazTransformationHelper.standardExpansion(previousState, 1 / pressureRatio);
+					nextState = WaterTableBased.isentropicExpansion(previousState, 1 / pressureRatio);
 				} else if (pressureRatio > 1) {
-					nextState = WaterAsRealGazTransformationHelper.standardCompression(previousState, pressureRatio);
+					nextState = WaterTableBased.isentropicCompression(previousState, pressureRatio);
 				}
 				//need to ensure that it's empty before end
 				//.get(this.direction.getAxis()
@@ -154,7 +153,7 @@ public class SteamCurrent extends Entity{
             inputFluidState = ((SteamInputBlockEntity) be).getState();
         }
         if (inputFluidState==null){
-			inputFluidState = WaterAsRealGazTransformationHelper.DEFAULT_STATE;
+			inputFluidState = WaterTableBased.DEFAULT_STATE;
 		}
         return inputFluidState;
 	}
@@ -282,17 +281,21 @@ public class SteamCurrent extends Entity{
 				if (be instanceof SteamCollectorBlockEntity steamCollector){
 					try {
 						//cheating by getting the opposite side.
-						IFluidHandler fluidHandler = steamCollector.getCapability(ForgeCapabilities.FLUID_HANDLER, this.getDirection().getOpposite()).orElseThrow(() -> new RuntimeException("No FluidHandler found"));
-						CompoundTag nbt = new CompoundTag();
-						nbt.put("realGazState", getOutputFluidState().serialize());
-						fluidHandler.fill(new FluidStack(Fluids.WATER, (int) getFlow(), new CompoundTag()), IFluidHandler.FluidAction.EXECUTE);
+						if (getDirection().getOpposite() == steamCollector.getBlockState().getValue(SteamCollectorBlock.FACING)) {
+							CompoundTag nbt = new CompoundTag();
+							nbt.put("realGazState", getOutputFluidState().serialize());
+							steamCollector.getTank().fill(new FluidStack(Fluids.WATER, (int) getFlow(), nbt), IFluidHandler.FluidAction.EXECUTE);
+						}
 					}
 					catch (Exception ignored){}
 				}
 			}
 		}
 	}
-
+	@Override
+	public Direction getDirection() {
+		return entityData.get(SYNCED_DIRECTION_ACCESSOR);
+	}
 	@Override
 	public @NotNull Packet<ClientGamePacketListener> getAddEntityPacket() {
 		return NetworkHooks.getEntitySpawningPacket(this);

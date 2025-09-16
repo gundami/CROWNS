@@ -1,10 +1,15 @@
 package com.rae.crowns.content.thermodynamics.compressor;
 
-import com.rae.crowns.api.thermal_utilities.SpecificRealGazState;
-import com.rae.crowns.api.transformations.WaterAsRealGazTransformationHelper;
+import com.rae.crowns.Constants;
+import com.rae.formicapi.FormicApiLang;
+import com.rae.formicapi.thermal_utilities.SpecificRealGazState;
+import com.rae.formicapi.thermal_utilities.helper.WaterTableBased;
+import com.rae.crowns.CROWNSLang;
 import com.rae.crowns.content.thermodynamics.StateFluidTank;
+import com.simibubi.create.content.kinetics.KineticNetwork;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
+import com.simibubi.create.foundation.utility.CreateLang;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -74,7 +79,30 @@ public class CompressorBlockEntity extends KineticBlockEntity {
     }
     @Override
     public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
-        containedFluidTooltip(tooltip, isPlayerSneaking, inputFluidCapability);
+        super.addToGoggleTooltip(tooltip,isPlayerSneaking);
+        SpecificRealGazState inputState = INPUT_WATER_TANK.getState();
+        CreateLang.builder().add(
+                    Component.literal("input : ")
+                            .append(
+                                    FormicApiLang.formatTemperature(inputState.temperature()).component()
+                                .append( " | ")
+                                .append(FormicApiLang.formatPressure(inputState.pressure()).component())
+                                .append(" | ")
+                                .append(
+                                        Component.literal("x = " +(int) (inputState.vaporQuality() *100) + "%")
+                                )))
+                .forGoggles(tooltip, 1);
+        SpecificRealGazState outputState = OUTPUT_WATER_TANK.getState();
+        CreateLang.builder().add(
+                Component.literal("output : ").append(
+                        FormicApiLang.formatTemperature(outputState.temperature()).component()
+                                .append( " | ")
+                                .append(FormicApiLang.formatPressure(outputState.pressure()).component())
+                                .append(" | ")
+                                .append(
+                                        Component.literal("x = " +(int) (outputState.vaporQuality() *100) + "%")
+                                )))
+                .forGoggles(tooltip, 1);
         return true;
     }
     @Override
@@ -137,15 +165,15 @@ public class CompressorBlockEntity extends KineticBlockEntity {
                     sendData();
             }
             SpecificRealGazState inputState =  INPUT_WATER_TANK.getState();
-            FluidStack water = INPUT_WATER_TANK.drain((int) speed, IFluidHandler.FluidAction.SIMULATE);
+            FluidStack water = INPUT_WATER_TANK.drain((int) Math.abs(speed), IFluidHandler.FluidAction.SIMULATE);
             if(!water.isEmpty()) {
-                SpecificRealGazState outputState = WaterAsRealGazTransformationHelper.standardCompression(inputState, pressureRatio());
+                SpecificRealGazState outputState = WaterTableBased.isentropicCompression(inputState, pressureRatio());
                 power = (int) (outputState.specificEnthalpy() - inputState.specificEnthalpy()) * water.getAmount()/ Constants.whatSU;
 
                 CompoundTag tag = new CompoundTag();
                 tag.put("realGazState", outputState.serialize());
                 water.setTag(tag);
-                INPUT_WATER_TANK.drain(Math.min((int) speed,OUTPUT_WATER_TANK.fill(water, IFluidHandler.FluidAction.EXECUTE)), IFluidHandler.FluidAction.EXECUTE);
+                INPUT_WATER_TANK.drain(Math.min((int) Math.abs(speed),OUTPUT_WATER_TANK.fill(water, IFluidHandler.FluidAction.EXECUTE)), IFluidHandler.FluidAction.EXECUTE);
                 if (hasNetwork() && speed != 0) {
 
                     KineticNetwork network = getOrCreateNetwork();

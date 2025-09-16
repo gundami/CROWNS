@@ -1,7 +1,8 @@
 package com.rae.crowns.config;
 
 import com.rae.crowns.CROWNS;
-import com.simibubi.create.foundation.config.ConfigBase;
+import net.createmod.catnip.config.ConfigBase;
+import org.jetbrains.annotations.NotNull;
 
 public class CROWNSCfgServer extends ConfigBase {
 
