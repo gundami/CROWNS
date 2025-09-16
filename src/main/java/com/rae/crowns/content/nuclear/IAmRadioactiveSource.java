@@ -2,7 +2,8 @@ package com.rae.crowns.content.nuclear;
 
 import com.rae.crowns.content.RayTraceUtil;
 import com.rae.crowns.init.misc.TagsInit;
-import net.createmod.catnip.data.Couple;
+
+import com.simibubi.create.foundation.utility.Couple;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
 import net.minecraft.tags.FluidTags;

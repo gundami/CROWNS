@@ -1,7 +1,8 @@
 package com.rae.crowns.init.client;
 
+import com.jozufozu.flywheel.core.PartialModel;
 import com.rae.crowns.CROWNS;
-import dev.engine_room.flywheel.lib.model.baked.PartialModel;
+
 
 @SuppressWarnings("ALL")
 public class PartialModelInit {

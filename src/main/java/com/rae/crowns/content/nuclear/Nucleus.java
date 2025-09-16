@@ -1,7 +1,7 @@
 package com.rae.crowns.content.nuclear;
 
 import com.rae.crowns.config.CROWNSConfigs;
-import net.createmod.catnip.data.Couple;
+import com.simibubi.create.foundation.utility.Couple;
 
 import java.util.HashMap;
 import java.util.Map;

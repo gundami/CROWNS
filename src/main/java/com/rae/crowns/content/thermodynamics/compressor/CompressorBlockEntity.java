@@ -9,7 +9,8 @@ import com.rae.crowns.content.thermodynamics.StateFluidTank;
 import com.simibubi.create.content.kinetics.KineticNetwork;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
-import com.simibubi.create.foundation.utility.CreateLang;
+
+import com.simibubi.create.foundation.utility.Lang;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -81,7 +82,7 @@ public class CompressorBlockEntity extends KineticBlockEntity {
     public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
         super.addToGoggleTooltip(tooltip,isPlayerSneaking);
         SpecificRealGazState inputState = INPUT_WATER_TANK.getState();
-        CreateLang.builder().add(
+        Lang.builder().add(
                     Component.literal("input : ")
                             .append(
                                     FormicApiLang.formatTemperature(inputState.temperature()).component()
@@ -93,7 +94,7 @@ public class CompressorBlockEntity extends KineticBlockEntity {
                                 )))
                 .forGoggles(tooltip, 1);
         SpecificRealGazState outputState = OUTPUT_WATER_TANK.getState();
-        CreateLang.builder().add(
+        Lang.builder().add(
                 Component.literal("output : ").append(
                         FormicApiLang.formatTemperature(outputState.temperature()).component()
                                 .append( " | ")

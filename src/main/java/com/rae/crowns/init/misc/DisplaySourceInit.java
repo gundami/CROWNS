@@ -2,7 +2,8 @@ package com.rae.crowns.init.misc;
 
 import com.rae.crowns.content.nuclear.RadiationSourceDisplaySource;
 import com.rae.crowns.content.nuclear.TemperatureDisplaySource;
-import com.simibubi.create.api.behaviour.display.DisplaySource;
+
+import com.simibubi.create.content.redstone.displayLink.source.DisplaySource;
 import com.tterrag.registrate.util.entry.RegistryEntry;
 
 import java.util.function.Supplier;

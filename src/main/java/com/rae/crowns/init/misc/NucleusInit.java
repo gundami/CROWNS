@@ -1,7 +1,8 @@
 package com.rae.crowns.init.misc;
 
 import com.rae.crowns.content.nuclear.Nucleus;
-import net.createmod.catnip.data.Couple;
+import com.simibubi.create.foundation.utility.Couple;
+
 
 import java.util.List;
 import java.util.Map;

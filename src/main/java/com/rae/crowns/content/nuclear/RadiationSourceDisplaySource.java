@@ -2,9 +2,9 @@ package com.rae.crowns.content.nuclear;
 
 import com.rae.crowns.CROWNSLang;
 import com.rae.formicapi.FormicApiLang;
-import com.simibubi.create.api.behaviour.display.DisplaySource;
 import com.simibubi.create.content.redstone.displayLink.DisplayLinkContext;
 
+import com.simibubi.create.content.redstone.displayLink.source.DisplaySource;
 import com.simibubi.create.content.redstone.displayLink.target.DisplayTargetStats;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.level.block.entity.BlockEntity;

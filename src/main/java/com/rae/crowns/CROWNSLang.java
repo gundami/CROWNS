@@ -1,8 +1,9 @@
 package com.rae.crowns;
 
-import net.createmod.catnip.lang.Lang;
-import net.createmod.catnip.lang.LangBuilder;
-import net.createmod.catnip.lang.LangNumberFormat;
+
+import com.simibubi.create.foundation.utility.Lang;
+import com.simibubi.create.foundation.utility.LangBuilder;
+import com.simibubi.create.foundation.utility.LangNumberFormat;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.item.ItemStack;
@@ -18,7 +19,7 @@ public class CROWNSLang extends Lang {
      * legacy-ish. Use CROWNSLang.translate and other builder methods where possible
      */
     public static MutableComponent translateDirect(String key, Object... args) {
-        Object[] args1 = LangBuilder.resolveBuilders(args);
+        Object[] args1 = Lang.resolveBuilders(args);
         return Component.translatable(CROWNS.MODID + "." + key, args1);
     }
 

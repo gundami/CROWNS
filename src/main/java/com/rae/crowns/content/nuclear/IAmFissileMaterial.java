@@ -2,7 +2,8 @@ package com.rae.crowns.content.nuclear;
 
 
 import com.rae.crowns.CROWNS;
-import net.createmod.catnip.data.Couple;
+
+import com.simibubi.create.foundation.utility.Couple;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.HashMap;

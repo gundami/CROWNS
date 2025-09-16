@@ -5,10 +5,12 @@ import com.rae.formicapi.thermal_utilities.SpecificRealGazState;
 import com.rae.crowns.CROWNSLang;
 import com.rae.crowns.content.thermodynamics.StateFluidTank;
 import com.rae.crowns.init.misc.EntityInit;
-import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
+
+import com.simibubi.create.content.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
-import com.simibubi.create.foundation.utility.CreateLang;
+
+import com.simibubi.create.foundation.utility.Lang;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
@@ -169,7 +171,7 @@ public class SteamInputBlockEntity extends SmartBlockEntity implements IHaveGogg
 						Component.literal("x = " +(int) (newState.vaporQuality() *100) + "%")
 				)
 				.forGoggles(tooltip, 1);
-		CreateLang.builder().add(
+		Lang.builder().add(
 				Component.literal(" Flow = "+ flow + "/ 1000")
 		)				.forGoggles(tooltip, 1);
 

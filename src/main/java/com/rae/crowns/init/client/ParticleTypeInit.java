@@ -4,7 +4,8 @@ import com.rae.crowns.CROWNS;
 import com.rae.flow.client.FlowParticleData;
 import com.rae.crowns.content.thermodynamics.turbine.SteamFlowParticleData;
 import com.simibubi.create.foundation.particle.ICustomParticleData;
-import net.createmod.catnip.lang.Lang;
+
+import com.simibubi.create.foundation.utility.Lang;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraftforge.api.distmarker.Dist;

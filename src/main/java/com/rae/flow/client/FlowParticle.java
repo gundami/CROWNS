@@ -2,7 +2,8 @@ package com.rae.flow.client;
 
 import com.rae.flow.commun.FlowLine;
 
-import net.createmod.catnip.theme.Color;
+
+import com.simibubi.create.foundation.utility.Color;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleProvider;

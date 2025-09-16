@@ -7,7 +7,8 @@ import com.rae.formicapi.thermal_utilities.SpecificRealGazState;
 import com.rae.formicapi.thermal_utilities.helper.WaterTableBased;
 import com.rae.crowns.init.misc.BlockInit;
 import com.rae.crowns.init.data.EntityDataSerializersInit;
-import net.createmod.catnip.theme.Color;
+
+import com.simibubi.create.foundation.utility.Color;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;

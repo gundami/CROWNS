@@ -1,6 +1,6 @@
 package com.rae.crowns.content.sound;
 
-import net.createmod.catnip.animation.AnimationTickHolder;
+import com.simibubi.create.foundation.utility.AnimationTickHolder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.sounds.SoundEvent;

@@ -7,12 +7,14 @@ import com.rae.crowns.content.thermodynamics.IHaveTemperature;
 import com.rae.crowns.config.CROWNSConfigs;
 import com.rae.crowns.init.misc.FluidInit;
 import com.rae.formicapi.FormicApiLang;
-import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
+
+import com.simibubi.create.content.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 
-import net.createmod.catnip.data.Couple;
-import net.createmod.catnip.theme.Color;
+
+import com.simibubi.create.foundation.utility.Color;
+import com.simibubi.create.foundation.utility.Couple;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 

@@ -3,9 +3,10 @@ package com.rae.crowns.content.sound;
 
 import com.rae.crowns.init.client.SoundInit;
 import com.simibubi.create.foundation.sound.SoundScapes;
+import com.simibubi.create.foundation.utility.AnimationTickHolder;
+import com.simibubi.create.foundation.utility.Pair;
 import com.simibubi.create.infrastructure.config.AllConfigs;
-import net.createmod.catnip.animation.AnimationTickHolder;
-import net.createmod.catnip.data.Pair;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;

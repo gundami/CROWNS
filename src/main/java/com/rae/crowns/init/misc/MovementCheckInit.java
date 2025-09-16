@@ -1,7 +1,7 @@
 package com.rae.crowns.init.misc;
 
 import com.rae.crowns.content.nuclear.AssemblyBlock;
-import com.simibubi.create.api.contraption.BlockMovementChecks;
+import com.simibubi.create.content.contraptions.BlockMovementChecks;
 
 public class MovementCheckInit {
     public static void register(){

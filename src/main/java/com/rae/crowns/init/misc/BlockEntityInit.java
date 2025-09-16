@@ -8,7 +8,7 @@ import com.rae.crowns.content.nuclear.AssemblyBlockEntity;
 import com.rae.crowns.content.thermodynamics.conduction.HeatExchangerBlockEntity;
 import com.rae.crowns.init.client.PartialModelInit;
 import com.simibubi.create.AllPartialModels;
-import com.simibubi.create.content.kinetics.base.SingleAxisRotatingVisual;
+
 import com.tterrag.registrate.util.entry.BlockEntityEntry;
 
 import static com.rae.crowns.CROWNS.REGISTRATE;
