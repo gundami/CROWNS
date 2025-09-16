@@ -11,6 +11,14 @@
 
   "item.crowns.uranium_ingot": "Uranium Ingot",
   "item.crowns.raw_uranium": "Raw Uranium",
+  "item.crowns.fuel_rod": "Fuel Rod",
+  "item.crowns.enriched_uranium_nugget": "Enriched Uranium Nugget",
+  "item.crowns.enriched_uranium_ingot": "Enriched Uranium Ingot",
+  "item.crowns.depleted_uranium_nugget": "Depleted Uranium Nugget",
+  "item.crowns.depleted_uranium_ingot": "Depleted Uranium Ingot",
+
+  "nucleus.crowns.u235": "Uranium-235",
+  "nucleus.crowns.u238": "Uranium-238",
 
   "itemGroup.crowns.nuclear": "CROWNS",
 
