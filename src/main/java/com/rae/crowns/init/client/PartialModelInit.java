@@ -7,10 +7,10 @@ import com.rae.crowns.CROWNS;
 @SuppressWarnings("ALL")
 public class PartialModelInit {
     public static final PartialModel TURBINE_STAGE = block("turbine/rotor");
-
+    public static final PartialModel COMPRESSOR = block("compressor/cog");
 
     private static PartialModel block(String path) {
-        return PartialModel.of(CROWNS.resource("block/" + path));
+        return new PartialModel(CROWNS.resource("block/" + path));
     }
 
     public static void init() {

@@ -1,5 +1,6 @@
 package com.rae.crowns.content.thermodynamics.turbine;
 
+import com.jozufozu.flywheel.backend.Backend;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.rae.crowns.init.client.PartialModelInit;
@@ -21,7 +22,7 @@ public class TurbineStageRenderer extends KineticBlockEntityRenderer<TurbineStag
     @Override
     protected void renderSafe(TurbineStageBlockEntity be, float partialTicks, PoseStack ms, MultiBufferSource buffer,
                               int light, int overlay) {
-        if (VisualizationManager.supportsVisualization(be.getLevel())) return;
+        if (Backend.canUseInstancing(be.getLevel())) return;
 
         //super.renderSafe(be, partialTicks, ms, buffer, light, overlay);
         BlockState state = be.getBlockState();

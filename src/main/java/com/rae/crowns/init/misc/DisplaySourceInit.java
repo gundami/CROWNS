@@ -11,12 +11,12 @@ import java.util.function.Supplier;
 import static com.rae.crowns.CROWNS.REGISTRATE;
 
 public class DisplaySourceInit {
-    public static final RegistryEntry<DisplaySource> ACTIVITY = simple("radiation_source", RadiationSourceDisplaySource::new);
-    public static final RegistryEntry<DisplaySource> TEMPERATURE = simple("temperature", TemperatureDisplaySource::new);
-
-    private static <T extends DisplaySource> RegistryEntry<T> simple(String name, Supplier<T> supplier) {
-        return REGISTRATE.displaySource(name, supplier).register();
-    }
+//    public static final RegistryEntry<DisplaySource> ACTIVITY = simple("radiation_source", RadiationSourceDisplaySource::new);
+//    public static final RegistryEntry<DisplaySource> TEMPERATURE = simple("temperature", TemperatureDisplaySource::new);
+//
+//    private static <T extends DisplaySource> RegistryEntry<T> simple(String name, Supplier<T> supplier) {
+//        return REGISTRATE.displaySource(name, supplier).register();
+//    }
 
     public static void register() {
     }

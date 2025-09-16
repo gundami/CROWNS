@@ -84,8 +84,8 @@ public class BlockInit {
                 }
                 return 0;
             }))
-            .transform(displaySource(DisplaySourceInit.ACTIVITY))
-            .transform(displaySource(DisplaySourceInit.TEMPERATURE))
+            //.transform(displaySource(DisplaySourceInit.ACTIVITY))
+            //.transform(displaySource(DisplaySourceInit.TEMPERATURE))
             .item()
             .build()
             .register();

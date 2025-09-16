@@ -1,12 +1,14 @@
 package com.rae.crowns.init.misc;
 
 import com.rae.crowns.content.thermodynamics.compressor.CompressorBlockEntity;
+import com.rae.crowns.content.thermodynamics.compressor.CompressorInstance;
 import com.rae.crowns.content.thermodynamics.compressor.CompressorRenderer;
 import com.rae.crowns.content.thermodynamics.turbine.*;
 import com.rae.crowns.content.thermodynamics.conduction.HeatExchangerRenderer;
 import com.rae.crowns.content.nuclear.AssemblyBlockEntity;
 import com.rae.crowns.content.thermodynamics.conduction.HeatExchangerBlockEntity;
 import com.rae.crowns.init.client.PartialModelInit;
+
 import com.simibubi.create.AllPartialModels;
 
 import com.tterrag.registrate.util.entry.BlockEntityEntry;
@@ -22,14 +24,16 @@ public class BlockEntityInit {
 
     public static final BlockEntityEntry<TurbineStageBlockEntity> TURBINE_STAGE = REGISTRATE
             .blockEntity("turbine_stage", TurbineStageBlockEntity::new)
-            .visual(() -> SingleAxisRotatingVisual.ofZ(PartialModelInit.TURBINE_STAGE))
+            //.instance(() -> SingleAxisRotatingVisual.ofZ(PartialModelInit.TURBINE_STAGE))
+            .instance(() -> TurbineStageInstance::new)
             .validBlock(BlockInit.TURBINE_STAGE)
             .renderer(() -> TurbineStageRenderer::new)
             .register();
 
     public static final BlockEntityEntry<CompressorBlockEntity> COMPRESSOR = REGISTRATE
             .blockEntity("compressor_stage", CompressorBlockEntity::new)
-            .visual(() -> SingleAxisRotatingVisual.ofZ(AllPartialModels.MECHANICAL_PUMP_COG))
+            //.visual(() -> SingleAxisRotatingVisual.ofZ(AllPartialModels.MECHANICAL_PUMP_COG))
+            .instance(() -> CompressorInstance::new)
             .validBlock(BlockInit.COMPRESSOR)
             .renderer(() -> CompressorRenderer::new)
             .register();
