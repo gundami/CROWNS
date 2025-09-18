@@ -117,6 +117,9 @@ public class SteamCurrent extends Entity{
 		powerForStage = new HashMap<>();
 		HashMap<BlockPos, SpecificRealGazState>  stateMap = new HashMap<>();
 		SpecificRealGazState previousState = getInputFluidState();
+		if (previousState == null) {
+			previousState = WaterTableBased.DEFAULT_STATE;
+		}
 		stateMap.put(entityData.get(SYNCED_INJECTOR_ACCESSOR),previousState);
 		//System.out.println("start water : "+previousState);
 		//sorted to ensure correct thing
@@ -124,12 +127,17 @@ public class SteamCurrent extends Entity{
 		SpecificRealGazState nextState = previousState;
 		for (ISteamPressureChange stage:stages) {
 			i++;
-            if (stage != null) {
+            if (stage != null && previousState != null) {
 				float pressureRatio = stage.pressureRatio();
-				if (pressureRatio < 1) {
-					nextState = WaterTableBased.isentropicExpansion(previousState, 1 / pressureRatio);
-				} else if (pressureRatio > 1) {
-					nextState = WaterTableBased.isentropicCompression(previousState, pressureRatio);
+				try {
+					if (pressureRatio < 1) {
+						nextState = WaterTableBased.isentropicExpansion(previousState, 1 / pressureRatio);
+					} else if (pressureRatio > 1) {
+						nextState = WaterTableBased.isentropicCompression(previousState, pressureRatio);
+					}
+				} catch (IllegalStateException e) {
+					// Handle empty row table error by using default state
+					nextState = WaterTableBased.DEFAULT_STATE;
 				}
 				//need to ensure that it's empty before end
 				//.get(this.direction.getAxis()
@@ -153,10 +161,10 @@ public class SteamCurrent extends Entity{
         if (be instanceof SteamInputBlockEntity){
             inputFluidState = ((SteamInputBlockEntity) be).getState();
         }
-        if (inputFluidState==null){
+        if (inputFluidState == null){
 			inputFluidState = WaterTableBased.DEFAULT_STATE;
 		}
-        return inputFluidState;
+        return inputFluidState != null ? inputFluidState : WaterTableBased.DEFAULT_STATE;
 	}
 
 	public SpecificRealGazState getOutputFluidState() {
